@@ -63,6 +63,134 @@ func (e *GenElement) Generate() string {
 	return p.Generates()[0]
 }
 
+func (e *GenElement) GenerateCreate() string {
+	tag := ""
+	if e.Tags != nil {
+		var ks []string
+		for k := range e.Tags {
+			ks = append(ks, k)
+		}
+		sort.Strings(ks)
+
+		var tags []string
+		for _, v := range ks {
+			if strings.ToLower(v) != "json" {
+				continue
+			}
+			if e.Tags[v][0] == "-" {
+				e.Tags[v][0] = strings.ToLower(e.Name)
+			}
+			tags = append(tags, fmt.Sprintf(`%v:"%v"`, v, strings.Join(e.Tags[v], ";")))
+		}
+		tag = fmt.Sprintf("`%v`", strings.Join(tags, " "))
+	}
+
+	var p generate.PrintAtom
+	if len(e.Notes) > 0 {
+		p.Add(e.Name, e.Type, tag, "// "+e.Notes)
+	} else {
+		p.Add(e.Name, e.Type, tag)
+	}
+
+	return p.Generates()[0]
+}
+
+func (e *GenElement) GenerateDelete() string {
+	tag := ""
+	if e.Tags != nil {
+		var ks []string
+		for k := range e.Tags {
+			ks = append(ks, k)
+		}
+		sort.Strings(ks)
+
+		var tags []string
+		for _, v := range ks {
+			if strings.ToLower(v) != "json" {
+				continue
+			}
+			if e.Tags[v][0] == "-" {
+				e.Tags[v][0] = strings.ToLower(e.Name)
+			}
+			tags = append(tags, fmt.Sprintf(`%v:"%v"`, v, strings.Join(e.Tags[v], ";")))
+		}
+		tag = fmt.Sprintf("`%v`", strings.Join(tags, " "))
+	}
+
+	var p generate.PrintAtom
+	if len(e.Notes) > 0 {
+		p.Add(e.Name, e.Type, tag, "// "+e.Notes)
+	} else {
+		p.Add(e.Name, e.Type, tag)
+	}
+
+	return p.Generates()[0]
+}
+
+func (e *GenElement) GenerateUpdate() string {
+	tag := ""
+	if e.Tags != nil {
+		var ks []string
+		for k := range e.Tags {
+			ks = append(ks, k)
+		}
+		sort.Strings(ks)
+
+		var tags []string
+		for _, v := range ks {
+			if strings.ToLower(v) != "json" {
+				continue
+			}
+			if e.Tags[v][0] == "-" {
+				e.Tags[v][0] = strings.ToLower(e.Name)
+			}
+			tags = append(tags, fmt.Sprintf(`%v:"%v"`, v, strings.Join(e.Tags[v], ";")))
+		}
+		tag = fmt.Sprintf("`%v`", strings.Join(tags, " "))
+	}
+
+	var p generate.PrintAtom
+	if len(e.Notes) > 0 {
+		p.Add(e.Name, e.Type, tag, "// "+e.Notes)
+	} else {
+		p.Add(e.Name, e.Type, tag)
+	}
+
+	return p.Generates()[0]
+}
+
+func (e *GenElement) GenerateList() string {
+	tag := ""
+	if e.Tags != nil {
+		var ks []string
+		for k := range e.Tags {
+			ks = append(ks, k)
+		}
+		sort.Strings(ks)
+
+		var tags []string
+		for _, v := range ks {
+			if strings.ToLower(v) != "json" {
+				continue
+			}
+			if e.Tags[v][0] == "-" {
+				e.Tags[v][0] = strings.ToLower(e.Name)
+			}
+			tags = append(tags, fmt.Sprintf(`%v:"%v"`, v, strings.Join(e.Tags[v], ";")))
+		}
+		tag = fmt.Sprintf("`%v`", strings.Join(tags, " "))
+	}
+
+	var p generate.PrintAtom
+	if len(e.Notes) > 0 {
+		p.Add(e.Name, e.Type, tag, "// "+e.Notes)
+	} else {
+		p.Add(e.Name, e.Type, tag)
+	}
+
+	return p.Generates()[0]
+}
+
 // GenerateColor Get the result data.获取结果数据
 func (e *GenElement) GenerateColor() string {
 	tag := ""
@@ -212,6 +340,147 @@ func (s *GenStruct) Generates() []string {
 	return p.Generates()
 }
 
+func (s *GenStruct) GeneratesReqCreate() []string {
+	var p generate.PrintAtom
+	//增加表和表之间的间隔
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "=", 80))
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("\n")
+	p.Add("// " + s.Name + "Create " + s.Name + "表创建请求参数")
+	p.Add("type", s.Name+"Create", "struct {")
+	//加上Base类型
+	p.Add("BaseRequest      `json:\"-\"`")
+	p.Add("BaseTokenRequest      `json:\"-\"`")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+
+		//创建无需id，uuid,created_time,updated_time,is_deleted字段
+		if v.Name == "ID" || v.Name == "UUID" || v.Name == "CreatedTime" || v.Name == "UpdatedTime" || v.Name == "IsDeleted" {
+			continue
+		}
+
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateCreate())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesRespCreate() []string {
+	var p generate.PrintAtom
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "=", 80))
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("\n")
+	p.Add("// " + s.Name + "Create " + s.Name + "表创建返回参数")
+	p.Add("type", s.Name+"Create", "struct {}")
+	return p.Generates()
+}
+
+func (s *GenStruct) GeneratesReqDelete() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "Delete " + s.Name + "表删除请求参数")
+	p.Add("type", s.Name+"Delete", "struct {")
+	//加上Base类型
+	p.Add("BaseRequest      `json:\"-\"`")
+	p.Add("BaseTokenRequest      `json:\"-\"`")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+
+		//删除只需要uuid字段
+		if v.Name == "UUID" {
+		} else {
+			continue
+		}
+
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateDelete())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesRespDelete() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "Delete " + s.Name + "表删除返回参数")
+	p.Add("type", s.Name+"Delete", "struct {")
+	p.Add("}")
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesReqUpdate() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "Update " + s.Name + "表更新请求参数")
+	p.Add("type", s.Name+"Update", "struct {")
+	//加上Base类型
+	p.Add("BaseRequest      `json:\"-\"`")
+	p.Add("BaseTokenRequest      `json:\"-\"`")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+
+		//更新不需要id,is_deleted,created_time,updated_time字段,同时其他类型改为指针类型
+		if v.Name == "ID" || v.Name == "IsDeleted" || v.Name == "CreatedTime" || v.Name == "UpdatedTime" {
+			continue
+		} else {
+			v.Type = "*" + v.Type
+		}
+
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateUpdate())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesRespUpdate() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "Update " + s.Name + "表更新返回参数")
+	p.Add("type", s.Name+"Update", "struct {")
+	p.Add("}")
+	return p.Generates()
+}
+
+func (s *GenStruct) GeneratesReqList() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "List " + s.Name + "表列表请求参数")
+	p.Add("type", s.Name+"List", "struct {")
+	//加上Base类型
+	p.Add("BaseRequest      `json:\"-\"`")
+	p.Add("BasePagination      `json:\"-\"`")
+	p.Add("BaseTokenRequest      `json:\"-\"`")
+	p.Add("}")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesRespList() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + "List " + s.Name + "表列表返回参数")
+	p.Add("type", s.Name+"List", "struct {")
+	p.Add("BasePagination      `json:\"-\"`")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+
+		//列表不需要is_deleted,updated_time字段
+		if v.Name == "IsDeleted" || v.Name == "UpdatedTime" {
+			continue
+		}
+
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateList())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+
 // \033[3%d;%dm -%d;%d-colors!\033[0m\n
 // GeneratesColor Get the result data on color.获取结果数据 带颜色
 func (s *GenStruct) GeneratesColor() []string {
@@ -290,6 +559,48 @@ func (p *GenPackage) Generate() string {
 			}
 		}
 	}
+
+	////添加增删改查结构体
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesReqCreate() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesRespCreate() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesReqDelete() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesRespDelete() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesReqUpdate() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesRespUpdate() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesReqList() {
+	//		pa.Add(v1)
+	//	}
+	//}
+	//for _, v := range p.Structs {
+	//	for _, v1 := range v.GeneratesRespList() {
+	//		pa.Add(v1)
+	//	}
+	//}
 	// -----------end
 
 	// add func
@@ -297,6 +608,80 @@ func (p *GenPackage) Generate() string {
 		pa.Add(v)
 	}
 	// -----------end
+
+	// output.输出
+	strOut := ""
+	for _, v := range pa.Generates() {
+		strOut += v + "\n"
+	}
+
+	return strOut
+}
+func (p *GenPackage) GenerateReqFile() string {
+	p.genimport() // auto add import .补充 import
+
+	var pa generate.PrintAtom
+	pa.Add("package", "request")
+	// add import
+	if p.Imports != nil {
+		pa.Add("import (")
+		pa.Add(")")
+	}
+
+	//添加增删改查结构体
+	for _, v := range p.Structs {
+
+		for _, v1 := range v.GeneratesReqCreate() {
+			pa.Add(v1)
+		}
+
+		for _, v1 := range v.GeneratesReqDelete() {
+			pa.Add(v1)
+		}
+
+		for _, v1 := range v.GeneratesReqUpdate() {
+			pa.Add(v1)
+		}
+
+		for _, v1 := range v.GeneratesReqList() {
+			pa.Add(v1)
+		}
+	}
+
+	// output.输出
+	strOut := ""
+	for _, v := range pa.Generates() {
+		strOut += v + "\n"
+	}
+
+	return strOut
+}
+func (p *GenPackage) GenerateRspFile() string {
+	p.genimport() // auto add import .补充 import
+
+	var pa generate.PrintAtom
+	pa.Add("package", "response")
+	// add import
+	if p.Imports != nil {
+		pa.Add("import (")
+		pa.Add("`time`")
+		pa.Add(")")
+	}
+
+	for _, v := range p.Structs {
+		for _, v1 := range v.GeneratesRespCreate() {
+			pa.Add(v1)
+		}
+		for _, v1 := range v.GeneratesRespDelete() {
+			pa.Add(v1)
+		}
+		for _, v1 := range v.GeneratesRespUpdate() {
+			pa.Add(v1)
+		}
+		for _, v1 := range v.GeneratesRespList() {
+			pa.Add(v1)
+		}
+	}
 
 	// output.输出
 	strOut := ""
@@ -323,4 +708,20 @@ func (p *GenPackage) genimport() {
 			}
 		}
 	}
+}
+func centerString(content, boundaryChar string, totalLength int) string {
+	// 确保 content 的长度不超过 totalLength
+	if len(content) > totalLength {
+		content = content[:totalLength]
+	}
+
+	// 计算左右边界的填充长度
+	paddingLength := (totalLength - len(content)) / 2
+
+	// 确保左右边界相等，如果总长度为奇数，右边界多一个字符
+	leftPadding := strings.Repeat(boundaryChar, paddingLength)
+	rightPadding := strings.Repeat(boundaryChar, totalLength-len(content)-paddingLength)
+
+	// 拼接字符串
+	return leftPadding + content + rightPadding
 }

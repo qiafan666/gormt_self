@@ -51,6 +51,38 @@ func Generate(info DBInfo) (out []GenOutInfo, m _Model) {
 	return
 }
 
+func GenerateReq(info DBInfo) (out GenOutInfo, m _Model) {
+	m = _Model{
+		info: info,
+	}
+
+	var stt GenOutInfo
+	stt.FileCtx = m.generateReq()
+	stt.FileName = "gen_req" + ".go"
+
+	if name := config.GetOutFileName(); len(name) > 0 {
+		stt.FileName = "gen_req" + ".go"
+	}
+
+	return stt, m
+}
+
+func GenerateResp(info DBInfo) (out GenOutInfo, m _Model) {
+	m = _Model{
+		info: info,
+	}
+
+	var stt GenOutInfo
+	stt.FileCtx = m.generateResp()
+	stt.FileName = "gen_resp" + ".go"
+
+	if name := config.GetOutFileName(); len(name) > 0 {
+		stt.FileName = "gen_resp" + ".go"
+	}
+
+	return stt, m
+}
+
 // getTableNameWithPrefix get table name with prefix
 func getTableNameWithPrefix(tableName string) string {
 	tablePrefix := config.GetTablePrefix()
@@ -120,6 +152,16 @@ func (m *_Model) generate() string {
 	m.pkg = nil
 	m.GetPackage()
 	return m.pkg.Generate()
+}
+func (m *_Model) generateReq() string {
+	m.pkg = nil
+	m.GetPackage()
+	return m.pkg.GenerateReqFile()
+}
+func (m *_Model) generateResp() string {
+	m.pkg = nil
+	m.GetPackage()
+	return m.pkg.GenerateRspFile()
 }
 
 // genTableElement Get table columns and comments.获取表列及注释

@@ -69,4 +69,34 @@ func showCmd() {
 		cmd, _ = exec.Command("gofmt", "-l", "-w", path).Output()
 		mylog.Info(string(cmd))
 	}
+
+	out, _ := model.GenerateReq(pkg)
+	path := config.GetOutDir() + "/../pojo/request/gen_req.go"
+	tools.WriteFile(path, []string{out.FileCtx}, true)
+	mylog.Info("fix structure fields for memory alignment")
+	cmd, _ := exec.Command("fieldalignment", "-fix", path).Output()
+	mylog.Info(string(cmd))
+
+	mylog.Info("formatting differs from goimport's:")
+	cmd, _ = exec.Command("goimports", "-l", "-w", path).Output()
+	mylog.Info(string(cmd))
+
+	mylog.Info("formatting differs from gofmt's:")
+	cmd, _ = exec.Command("gofmt", "-l", "-w", path).Output()
+	mylog.Info(string(cmd))
+
+	out2, _ := model.GenerateResp(pkg)
+	path2 := config.GetOutDir() + "/../pojo/response/gen_resp.go"
+	tools.WriteFile(path2, []string{out2.FileCtx}, true)
+	mylog.Info("fix structure fields for memory alignment")
+	cmd2, _ := exec.Command("fieldalignment", "-fix", path2).Output()
+	mylog.Info(string(cmd2))
+
+	mylog.Info("formatting differs from goimport's:")
+	cmd2, _ = exec.Command("goimports", "-l", "-w", path2).Output()
+	mylog.Info(string(cmd2))
+
+	mylog.Info("formatting differs from gofmt's:")
+	cmd2, _ = exec.Command("gofmt", "-l", "-w", path2).Output()
+	mylog.Info(string(cmd2))
 }
