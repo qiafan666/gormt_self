@@ -452,8 +452,8 @@ func (s *GenStruct) GeneratesReqList() []string {
 	p.Add("type", s.Name+"List", "struct {")
 	//加上Base类型
 	p.Add("BaseRequest      `json:\"-\"`")
-	p.Add("BasePagination      `json:\"-\"`")
 	p.Add("BaseTokenRequest      `json:\"-\"`")
+	p.Add("BasePagination")
 	p.Add("}")
 
 	return p.Generates()
@@ -463,6 +463,15 @@ func (s *GenStruct) GeneratesRespList() []string {
 	p.Add("// " + s.Name + "List " + s.Name + "表列表返回参数")
 	p.Add("type", s.Name+"List", "struct {")
 	p.Add("BasePagination      `json:\"-\"`")
+	p.Add(s.Name + "List []" + s.Name + " `json:\"" + camelCaseToSnakeCase(s.Name+"List") + "\"`")
+	p.Add("}")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesRespListContent() []string {
+	var p generate.PrintAtom
+	p.Add("// " + s.Name + " " + s.Name + "列表单项内容")
+	p.Add("type", s.Name, "struct {")
 	mp := make(map[string]bool, len(s.Em))
 	for _, v := range s.Em {
 
@@ -487,7 +496,7 @@ func (s *GenStruct) GeneratesService() []string {
 	p.Add(s.Name + "Delete" + "(info request." + s.Name + "Delete)(out response." + s.Name + "Delete, code commons.ResponseCode, err error)")
 	p.Add(s.Name + "Update" + "(info request." + s.Name + "Update)(out response." + s.Name + "Update, code commons.ResponseCode, err error)")
 	p.Add(s.Name + "List" + "(info request." + s.Name + "List)(out response." + s.Name + "List, code commons.ResponseCode, err error)")
-
+	p.Add("\n")
 	return p.Generates()
 }
 func (s *GenStruct) GeneratesImpl() []string {
@@ -529,12 +538,12 @@ func (s *GenStruct) GeneratesController() []string {
 	p.Add("// @Summary " + "创建接口")
 	p.Add("// @Description " + s.Name + "创建")
 	p.Add("// @Tags " + s.Name)
-	p.Add("// @Accept  json")
-	p.Add("// @Produce  json")
-	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/create [post]")
+	p.Add("// @Accept json")
+	p.Add("// @Produce json")
+	p.Add("// @Router /v1/" + lowerFirstChar(s.Name) + "/create [post]")
 	p.Add("// @param data body request." + s.Name + "Create true \"" + s.Name + "创建请求参数\"")
 	p.Add("// @Success 200 {object} response." + s.Name + "Create \"" + s.Name + "创建返回结果\"")
-	p.Add("func (g *" + "genControllerImp) " + s.Name + "Create(c *gin.Context) {")
+	p.Add("func (g *" + "GenControllerImp) " + s.Name + "Create(c *gin.Context) {")
 	p.Add("\tinput := request." + s.Name + "Create{}")
 	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
 	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
@@ -552,12 +561,12 @@ func (s *GenStruct) GeneratesController() []string {
 	p.Add("// @Summary " + "删除接口")
 	p.Add("// @Description " + s.Name + "删除")
 	p.Add("// @Tags " + s.Name)
-	p.Add("// @Accept  json")
-	p.Add("// @Produce  json")
-	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/delete [post]")
+	p.Add("// @Accept json")
+	p.Add("// @Produce json")
+	p.Add("// @Router /v1/" + lowerFirstChar(s.Name) + "/delete [post]")
 	p.Add("// @param data body request." + s.Name + "Delete true \"" + s.Name + "删除请求参数\"")
 	p.Add("// @Success 200 {object} response." + s.Name + "Delete \"" + s.Name + "删除返回结果\"")
-	p.Add("func (g *" + "genControllerImp) " + s.Name + "Delete(c *gin.Context) {")
+	p.Add("func (g *" + "GenControllerImp) " + s.Name + "Delete(c *gin.Context) {")
 	p.Add("\tinput := request." + s.Name + "Delete{}")
 	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
 	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
@@ -575,12 +584,12 @@ func (s *GenStruct) GeneratesController() []string {
 	p.Add("// @Summary " + "更新接口")
 	p.Add("// @Description " + s.Name + "更新")
 	p.Add("// @Tags " + s.Name)
-	p.Add("// @Accept  json")
-	p.Add("// @Produce  json")
-	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/update [post]")
+	p.Add("// @Accept json")
+	p.Add("// @Produce json")
+	p.Add("// @Router /v1/" + lowerFirstChar(s.Name) + "/update [post]")
 	p.Add("// @param data body request." + s.Name + "Update true \"" + s.Name + "更新请求参数\"")
 	p.Add("// @Success 200 {object} response." + s.Name + "Update \"" + s.Name + "更新返回结果\"")
-	p.Add("func (g *" + "genControllerImp) " + s.Name + "Update(c *gin.Context) {")
+	p.Add("func (g *" + "GenControllerImp) " + s.Name + "Update(c *gin.Context) {")
 	p.Add("\tinput := request." + s.Name + "Update{}")
 	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
 	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
@@ -598,12 +607,12 @@ func (s *GenStruct) GeneratesController() []string {
 	p.Add("// @Summary " + "列表接口")
 	p.Add("// @Description " + s.Name + "列表")
 	p.Add("// @Tags " + s.Name)
-	p.Add("// @Accept  json")
-	p.Add("// @Produce  json")
-	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/list [post]")
+	p.Add("// @Accept json")
+	p.Add("// @Produce json")
+	p.Add("// @Router /v1/" + lowerFirstChar(s.Name) + "/list [post]")
 	p.Add("// @param data body request." + s.Name + "List true \"" + s.Name + "列表请求参数\"")
 	p.Add("// @Success 200 {object} response." + s.Name + "List \"" + s.Name + "列表返回结果\"")
-	p.Add("func (g *" + "genControllerImp) " + s.Name + "List(c *gin.Context) {")
+	p.Add("func (g *" + "GenControllerImp) " + s.Name + "List(c *gin.Context) {")
 	p.Add("\tinput := request." + s.Name + "List{}")
 	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
 	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
@@ -819,6 +828,9 @@ func (p *GenPackage) GenerateRspFile() string {
 		for _, v1 := range v.GeneratesRespList() {
 			pa.Add(v1)
 		}
+		for _, v1 := range v.GeneratesRespListContent() {
+			pa.Add(v1)
+		}
 	}
 
 	// output.输出
@@ -905,13 +917,13 @@ func (p *GenPackage) GenerateControllers() string {
 	}
 	pa.Add("\n")
 
-	pa.Add("var genControllerIns *genControllerImp")
+	pa.Add("var genControllerIns *GenControllerImp")
 	pa.Add("var genControllerInitOnce sync.Once")
 	pa.Add("\n")
-	pa.Add("func NewGenControllerInstance() *genControllerImp {")
+	pa.Add("func NewGenControllerInstance() *GenControllerImp {")
 	pa.Add("\n")
 	pa.Add("	genControllerInitOnce.Do(func() {")
-	pa.Add("		genControllerIns = &genControllerImp{")
+	pa.Add("		genControllerIns = &GenControllerImp{")
 	pa.Add("			genService: services.NewGenServiceInstance(),")
 	pa.Add("		}")
 	pa.Add("	})")
@@ -919,7 +931,7 @@ func (p *GenPackage) GenerateControllers() string {
 	pa.Add("	return genControllerIns")
 	pa.Add("}")
 	pa.Add("\n")
-	pa.Add("type genControllerImp struct {")
+	pa.Add("type GenControllerImp struct {")
 	pa.Add("	genService services.GenService")
 	pa.Add("}")
 	pa.Add("\n")
@@ -973,4 +985,32 @@ func centerString(content, boundaryChar string, totalLength int) string {
 
 	// 拼接字符串
 	return leftPadding + content + rightPadding
+}
+
+// 首字母小写
+func lowerFirstChar(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
+
+	return strings.ToLower(str[:1]) + str[1:]
+}
+
+// 大写字母边小写，同时用下划线隔开
+func camelCaseToSnakeCase(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
+
+	newStr := ""
+	for i, v := range str {
+		if i == 0 {
+			newStr += strings.ToLower(string(v))
+		} else if v >= 'A' && v <= 'Z' {
+			newStr += "_" + strings.ToLower(string(v))
+		} else {
+			newStr += string(v)
+		}
+	}
+	return newStr
 }
