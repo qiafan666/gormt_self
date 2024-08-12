@@ -111,4 +111,16 @@ func showCmd() {
 
 	cmd3, _ = exec.Command("gofmt", "-l", "-w", path3).Output()
 	mylog.Info(string(cmd3))
+
+	out4, _ := model.GenerateControllers(pkg)
+	path4 := config.GetOutDir() + "/../controllers/gen_controller.go"
+	tools.WriteFile(path4, []string{out4.FileCtx}, true)
+	cmd4, _ := exec.Command("fieldalignment", "-fix", path4).Output()
+	mylog.Info(string(cmd4))
+
+	cmd4, _ = exec.Command("goimports", "-l", "-w", path4).Output()
+	mylog.Info(string(cmd4))
+
+	cmd4, _ = exec.Command("gofmt", "-l", "-w", path4).Output()
+	mylog.Info(string(cmd4))
 }

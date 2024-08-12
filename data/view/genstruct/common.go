@@ -518,6 +518,106 @@ func (s *GenStruct) GeneratesImpl() []string {
 
 	return p.Generates()
 }
+func (s *GenStruct) GeneratesController() []string {
+	var p generate.PrintAtom
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("// " + centerString(s.Name+" controller", "-", 80))
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("\n")
+
+	p.Add("// " + s.Name + "Create")
+	p.Add("// @Summary " + "创建接口")
+	p.Add("// @Description " + s.Name + "创建")
+	p.Add("// @Tags " + s.Name)
+	p.Add("// @Accept  json")
+	p.Add("// @Produce  json")
+	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/create [post]")
+	p.Add("// @param data body request." + s.Name + "Create true \"" + s.Name + "创建请求参数\"")
+	p.Add("// @Success 200 {object} response." + s.Name + "Create \"" + s.Name + "创建返回结果\"")
+	p.Add("func (g *" + "genControllerImp) " + s.Name + "Create(c *gin.Context) {")
+	p.Add("\tinput := request." + s.Name + "Create{}")
+	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
+	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
+	p.Add("\t} else {")
+	p.Add("\t\tif out, code, err := g." + "genService." + s.Name + "Create(input); err != nil {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildFailed(code, input.Language, input.RequestId))")
+	p.Add("\t\t} else {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildSuccess(out, input.Language, input.RequestId))")
+	p.Add("\t\t}")
+	p.Add("\t}")
+	p.Add("}")
+	p.Add("\n")
+
+	p.Add("// " + s.Name + "Delete")
+	p.Add("// @Summary " + "删除接口")
+	p.Add("// @Description " + s.Name + "删除")
+	p.Add("// @Tags " + s.Name)
+	p.Add("// @Accept  json")
+	p.Add("// @Produce  json")
+	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/delete [post]")
+	p.Add("// @param data body request." + s.Name + "Delete true \"" + s.Name + "删除请求参数\"")
+	p.Add("// @Success 200 {object} response." + s.Name + "Delete \"" + s.Name + "删除返回结果\"")
+	p.Add("func (g *" + "genControllerImp) " + s.Name + "Delete(c *gin.Context) {")
+	p.Add("\tinput := request." + s.Name + "Delete{}")
+	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
+	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
+	p.Add("\t} else {")
+	p.Add("\t\tif out, code, err := g." + "genService." + s.Name + "Delete(input); err != nil {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildFailed(code, input.Language, input.RequestId))")
+	p.Add("\t\t} else {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildSuccess(out, input.Language, input.RequestId))")
+	p.Add("\t\t}")
+	p.Add("\t}")
+	p.Add("}")
+	p.Add("\n")
+
+	p.Add("// " + s.Name + "Update")
+	p.Add("// @Summary " + "更新接口")
+	p.Add("// @Description " + s.Name + "更新")
+	p.Add("// @Tags " + s.Name)
+	p.Add("// @Accept  json")
+	p.Add("// @Produce  json")
+	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/update [post]")
+	p.Add("// @param data body request." + s.Name + "Update true \"" + s.Name + "更新请求参数\"")
+	p.Add("// @Success 200 {object} response." + s.Name + "Update \"" + s.Name + "更新返回结果\"")
+	p.Add("func (g *" + "genControllerImp) " + s.Name + "Update(c *gin.Context) {")
+	p.Add("\tinput := request." + s.Name + "Update{}")
+	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
+	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
+	p.Add("\t} else {")
+	p.Add("\t\tif out, code, err := g." + "genService." + s.Name + "Update(input); err != nil {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildFailed(code, input.Language, input.RequestId))")
+	p.Add("\t\t} else {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildSuccess(out, input.Language, input.RequestId))")
+	p.Add("\t\t}")
+	p.Add("\t}")
+	p.Add("}")
+	p.Add("\n")
+
+	p.Add("// " + s.Name + "List")
+	p.Add("// @Summary " + "列表接口")
+	p.Add("// @Description " + s.Name + "列表")
+	p.Add("// @Tags " + s.Name)
+	p.Add("// @Accept  json")
+	p.Add("// @Produce  json")
+	p.Add("// @Router /v1/" + strings.ToLower(s.Name) + "/list [post]")
+	p.Add("// @param data body request." + s.Name + "List true \"" + s.Name + "列表请求参数\"")
+	p.Add("// @Success 200 {object} response." + s.Name + "List \"" + s.Name + "列表返回结果\"")
+	p.Add("func (g *" + "genControllerImp) " + s.Name + "List(c *gin.Context) {")
+	p.Add("\tinput := request." + s.Name + "List{}")
+	p.Add("\tif bindCode, bindErr := function.BindAndValid(&input, c); bindErr != nil {")
+	p.Add("\t\tc.JSON(http.StatusOK, commons.BuildFailedWithMsg(bindCode, bindErr.Error(), input.RequestId))")
+	p.Add("\t} else {")
+	p.Add("\t\tif out, code, err := g." + "genService." + s.Name + "List(input); err != nil {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildFailed(code, input.Language, input.RequestId))")
+	p.Add("\t\t} else {")
+	p.Add("\t\t\tc.JSON(http.StatusOK, commons.BuildSuccess(out, input.Language, input.RequestId))")
+	p.Add("\t\t}")
+	p.Add("\t}")
+	p.Add("}")
+	p.Add("\n")
+	return p.Generates()
+}
 
 // \033[3%d;%dm -%d;%d-colors!\033[0m\n
 // GeneratesColor Get the result data on color.获取结果数据 带颜色
@@ -789,6 +889,56 @@ func (p *GenPackage) GenerateServices() string {
 
 	return strOut
 }
+func (p *GenPackage) GenerateControllers() string {
+	p.genimport() // auto add import .补充 import
+
+	var pa generate.PrintAtom
+	pa.Add("package", "controllers")
+	// add import
+	if p.Imports != nil {
+		pa.Add("import (")
+		pa.Add("\"github.com/qiafan666/gotato/commons\"")
+		pa.Add("\"sync\"")
+		pa.Add("\"github.com/gin-gonic/gin\"")
+		pa.Add("\"net/http\"")
+		pa.Add(")")
+	}
+	pa.Add("\n")
+
+	pa.Add("var genControllerIns *genControllerImp")
+	pa.Add("var genControllerInitOnce sync.Once")
+	pa.Add("\n")
+	pa.Add("func NewGenControllerInstance() *genControllerImp {")
+	pa.Add("\n")
+	pa.Add("	genControllerInitOnce.Do(func() {")
+	pa.Add("		genControllerIns = &genControllerImp{")
+	pa.Add("			genService: services.NewGenServiceInstance(),")
+	pa.Add("		}")
+	pa.Add("	})")
+	pa.Add("\n")
+	pa.Add("	return genControllerIns")
+	pa.Add("}")
+	pa.Add("\n")
+	pa.Add("type genControllerImp struct {")
+	pa.Add("	genService services.GenService")
+	pa.Add("}")
+	pa.Add("\n")
+	// -----------end
+	//controller
+	for _, v := range p.Structs {
+		for _, v1 := range v.GeneratesController() {
+			pa.Add(v1)
+		}
+	}
+
+	// output.输出
+	strOut := ""
+	for _, v := range pa.Generates() {
+		strOut += v + "\n"
+	}
+
+	return strOut
+}
 
 // AddFuncStr add func coding string.添加函数串
 func (p *GenPackage) AddFuncStr(src string) {
@@ -807,6 +957,7 @@ func (p *GenPackage) genimport() {
 		}
 	}
 }
+
 func centerString(content, boundaryChar string, totalLength int) string {
 	// 确保 content 的长度不超过 totalLength
 	if len(content) > totalLength {
