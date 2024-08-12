@@ -344,7 +344,7 @@ func (s *GenStruct) GeneratesReqCreate() []string {
 	var p generate.PrintAtom
 	//增加表和表之间的间隔
 	p.Add("// " + centerString("", "=", 80))
-	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "=", 80))
+	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "-", 80))
 	p.Add("// " + centerString("", "=", 80))
 	p.Add("\n")
 	p.Add("// " + s.Name + "Create " + s.Name + "表创建请求参数")
@@ -372,7 +372,7 @@ func (s *GenStruct) GeneratesReqCreate() []string {
 func (s *GenStruct) GeneratesRespCreate() []string {
 	var p generate.PrintAtom
 	p.Add("// " + centerString("", "=", 80))
-	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "=", 80))
+	p.Add("// " + centerString(strings.ToLower(s.TableName)+"表", "-", 80))
 	p.Add("// " + centerString("", "=", 80))
 	p.Add("\n")
 	p.Add("// " + s.Name + "Create " + s.Name + "表创建返回参数")
@@ -476,6 +476,44 @@ func (s *GenStruct) GeneratesRespList() []string {
 			p.Add(v.GenerateList())
 		}
 	}
+	p.Add("}")
+
+	return p.Generates()
+}
+
+func (s *GenStruct) GeneratesService() []string {
+	var p generate.PrintAtom
+	p.Add(s.Name + "Create" + "(info request." + s.Name + "Create)(out response." + s.Name + "Create, code commons.ResponseCode, err error)")
+	p.Add(s.Name + "Delete" + "(info request." + s.Name + "Delete)(out response." + s.Name + "Delete, code commons.ResponseCode, err error)")
+	p.Add(s.Name + "Update" + "(info request." + s.Name + "Update)(out response." + s.Name + "Update, code commons.ResponseCode, err error)")
+	p.Add(s.Name + "List" + "(info request." + s.Name + "List)(out response." + s.Name + "List, code commons.ResponseCode, err error)")
+
+	return p.Generates()
+}
+func (s *GenStruct) GeneratesImpl() []string {
+	var p generate.PrintAtom
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("// " + centerString(s.Name+" service layer implementation", "-", 80))
+	p.Add("// " + centerString("", "=", 80))
+	p.Add("\n")
+	p.Add("func (g genServiceImp) " + s.Name + "Create" + "(info request." + s.Name + "Create)(out response." + s.Name + "Create, code commons.ResponseCode, err error) {")
+	p.Add("\t//todo")
+	p.Add("\treturn")
+	p.Add("}")
+
+	p.Add("func (g genServiceImp) " + s.Name + "Delete" + "(info request." + s.Name + "Delete)(out response." + s.Name + "Delete, code commons.ResponseCode, err error) {")
+	p.Add("\t//todo")
+	p.Add("\treturn")
+	p.Add("}")
+
+	p.Add("func (g genServiceImp) " + s.Name + "Update" + "(info request." + s.Name + "Update)(out response." + s.Name + "Update, code commons.ResponseCode, err error) {")
+	p.Add("\t//todo")
+	p.Add("\treturn")
+	p.Add("}")
+
+	p.Add("func (g genServiceImp) " + s.Name + "List" + "(info request." + s.Name + "List)(out response." + s.Name + "List, code commons.ResponseCode, err error) {")
+	p.Add("\t//todo")
+	p.Add("\treturn")
 	p.Add("}")
 
 	return p.Generates()
@@ -679,6 +717,66 @@ func (p *GenPackage) GenerateRspFile() string {
 			pa.Add(v1)
 		}
 		for _, v1 := range v.GeneratesRespList() {
+			pa.Add(v1)
+		}
+	}
+
+	// output.输出
+	strOut := ""
+	for _, v := range pa.Generates() {
+		strOut += v + "\n"
+	}
+
+	return strOut
+}
+func (p *GenPackage) GenerateServices() string {
+	p.genimport() // auto add import .补充 import
+
+	var pa generate.PrintAtom
+	pa.Add("package", "services")
+	// add import
+	if p.Imports != nil {
+		pa.Add("import (")
+		pa.Add("\"github.com/qiafan666/gotato/commons\"")
+		pa.Add("\"sync\"")
+		pa.Add(")")
+	}
+
+	pa.Add("\n")
+	pa.Add("// " + "GenService service layer interface")
+	pa.Add("type", "GenService", "interface {")
+	for _, v := range p.Structs {
+		for _, v1 := range v.GeneratesService() {
+			pa.Add(v1)
+		}
+	}
+	pa.Add("}")
+
+	pa.Add("\n")
+	pa.Add("var genServiceIns *genServiceImp")
+	pa.Add("var genServiceInitOnce sync.Once")
+	pa.Add("\n")
+	pa.Add("func NewGenServiceInstance() GenService {")
+	pa.Add("\n")
+	pa.Add("	genServiceInitOnce.Do(func() {")
+	pa.Add("		genServiceIns = &genServiceImp{")
+	pa.Add("			dao: dao.Instance(),")
+	pa.Add("		}")
+	pa.Add("	})")
+	pa.Add("\n")
+	pa.Add("	return genServiceIns")
+	pa.Add("}")
+	pa.Add("\n")
+	pa.Add("type genServiceImp struct {")
+	pa.Add("	dao dao.Dao")
+	pa.Add("}")
+	// -----------end
+
+	//接口实现类
+	pa.Add("\n")
+
+	for _, v := range p.Structs {
+		for _, v1 := range v.GeneratesImpl() {
 			pa.Add(v1)
 		}
 	}

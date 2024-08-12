@@ -99,4 +99,16 @@ func showCmd() {
 	mylog.Info("formatting differs from gofmt's:")
 	cmd2, _ = exec.Command("gofmt", "-l", "-w", path2).Output()
 	mylog.Info(string(cmd2))
+
+	out3, _ := model.GenerateServices(pkg)
+	path3 := config.GetOutDir() + "/../services/gen_service.go"
+	tools.WriteFile(path3, []string{out3.FileCtx}, true)
+	cmd3, _ := exec.Command("fieldalignment", "-fix", path3).Output()
+	mylog.Info(string(cmd3))
+
+	cmd3, _ = exec.Command("goimports", "-l", "-w", path3).Output()
+	mylog.Info(string(cmd3))
+
+	cmd3, _ = exec.Command("gofmt", "-l", "-w", path3).Output()
+	mylog.Info(string(cmd3))
 }
