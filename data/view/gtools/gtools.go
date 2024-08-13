@@ -71,7 +71,7 @@ func showCmd() {
 	}
 
 	out, _ := model.GenerateReq(pkg)
-	path := config.GetOutDir() + "/../pojo/request/gen_req.go"
+	path := config.GetOutDir() + "/../gen/pojo/request/gen_req.go"
 	tools.WriteFile(path, []string{out.FileCtx}, true)
 	mylog.Info("fix structure fields for memory alignment")
 	cmd, _ := exec.Command("fieldalignment", "-fix", path).Output()
@@ -86,7 +86,7 @@ func showCmd() {
 	mylog.Info(string(cmd))
 
 	out2, _ := model.GenerateResp(pkg)
-	path2 := config.GetOutDir() + "/../pojo/response/gen_resp.go"
+	path2 := config.GetOutDir() + "/../gen/pojo/response/gen_resp.go"
 	tools.WriteFile(path2, []string{out2.FileCtx}, true)
 	mylog.Info("fix structure fields for memory alignment")
 	cmd2, _ := exec.Command("fieldalignment", "-fix", path2).Output()
@@ -101,7 +101,7 @@ func showCmd() {
 	mylog.Info(string(cmd2))
 
 	out3, _ := model.GenerateServices(pkg)
-	path3 := config.GetOutDir() + "/../services/gen_service.go"
+	path3 := config.GetOutDir() + "/../gen/services/gen_service.go"
 	tools.WriteFile(path3, []string{out3.FileCtx}, true)
 	cmd3, _ := exec.Command("fieldalignment", "-fix", path3).Output()
 	mylog.Info(string(cmd3))
@@ -113,7 +113,7 @@ func showCmd() {
 	mylog.Info(string(cmd3))
 
 	out4, _ := model.GenerateControllers(pkg)
-	path4 := config.GetOutDir() + "/../controllers/gen_controller.go"
+	path4 := config.GetOutDir() + "/../gen/controllers/gen_controller.go"
 	tools.WriteFile(path4, []string{out4.FileCtx}, true)
 	cmd4, _ := exec.Command("fieldalignment", "-fix", path4).Output()
 	mylog.Info(string(cmd4))
