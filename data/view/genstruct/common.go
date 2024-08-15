@@ -475,8 +475,8 @@ func (s *GenStruct) GeneratesRespListContent() []string {
 	mp := make(map[string]bool, len(s.Em))
 	for _, v := range s.Em {
 
-		//列表不需要is_deleted,updated_time字段
-		if v.Name == "IsDeleted" || v.Name == "UpdatedTime" {
+		//列表不需要id,is_deleted,updated_time字段
+		if v.Name == "ID" || v.Name == "IsDeleted" || v.Name == "UpdatedTime" {
 			continue
 		}
 
