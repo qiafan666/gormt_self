@@ -66,6 +66,21 @@ func GenerateReq(info DBInfo) (out GenOutInfo, m _Model) {
 
 	return stt, m
 }
+func GenerateReqCommon(info DBInfo) (out GenOutInfo, m _Model) {
+	m = _Model{
+		info: info,
+	}
+
+	var stt GenOutInfo
+	stt.FileCtx = m.generateReqCommon()
+	stt.FileName = "common" + ".go"
+
+	if name := config.GetOutFileName(); len(name) > 0 {
+		stt.FileName = "common" + ".go"
+	}
+
+	return stt, m
+}
 
 func GenerateResp(info DBInfo) (out GenOutInfo, m _Model) {
 	m = _Model{
@@ -78,6 +93,21 @@ func GenerateResp(info DBInfo) (out GenOutInfo, m _Model) {
 
 	if name := config.GetOutFileName(); len(name) > 0 {
 		stt.FileName = "gen_resp" + ".go"
+	}
+
+	return stt, m
+}
+func GenerateRespCommon(info DBInfo) (out GenOutInfo, m _Model) {
+	m = _Model{
+		info: info,
+	}
+
+	var stt GenOutInfo
+	stt.FileCtx = m.generateRespCommon()
+	stt.FileName = "common" + ".go"
+
+	if name := config.GetOutFileName(); len(name) > 0 {
+		stt.FileName = "common" + ".go"
 	}
 
 	return stt, m
@@ -190,10 +220,20 @@ func (m *_Model) generateReq() string {
 	m.GetPackage()
 	return m.pkg.GenerateReqFile()
 }
+func (m *_Model) generateReqCommon() string {
+	m.pkg = nil
+	m.GetPackage()
+	return m.pkg.GenerateReqCommon()
+}
 func (m *_Model) generateResp() string {
 	m.pkg = nil
 	m.GetPackage()
 	return m.pkg.GenerateRspFile()
+}
+func (m *_Model) generateRespCommon() string {
+	m.pkg = nil
+	m.GetPackage()
+	return m.pkg.GenerateRspCommon()
 }
 func (m *_Model) generateServices() string {
 	m.pkg = nil

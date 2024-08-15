@@ -123,4 +123,28 @@ func showCmd() {
 
 	cmd4, _ = exec.Command("gofmt", "-l", "-w", path4).Output()
 	mylog.Info(string(cmd4))
+
+	out5, _ := model.GenerateReqCommon(pkg)
+	path5 := config.GetOutDir() + "/../gen/pojo/request/common.go"
+	tools.WriteFile(path5, []string{out5.FileCtx}, true)
+	cmd5, _ := exec.Command("fieldalignment", "-fix", path5).Output()
+	mylog.Info(string(cmd5))
+
+	cmd5, _ = exec.Command("goimports", "-l", "-w", path5).Output()
+	mylog.Info(string(cmd5))
+
+	cmd5, _ = exec.Command("gofmt", "-l", "-w", path5).Output()
+	mylog.Info(string(cmd5))
+
+	out6, _ := model.GenerateRespCommon(pkg)
+	path6 := config.GetOutDir() + "/../gen/pojo/response/common.go"
+	tools.WriteFile(path6, []string{out6.FileCtx}, true)
+	cmd6, _ := exec.Command("fieldalignment", "-fix", path6).Output()
+	mylog.Info(string(cmd6))
+
+	cmd6, _ = exec.Command("goimports", "-l", "-w", path6).Output()
+	mylog.Info(string(cmd6))
+
+	cmd6, _ = exec.Command("gofmt", "-l", "-w", path6).Output()
+	mylog.Info(string(cmd6))
 }
