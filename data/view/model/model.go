@@ -58,10 +58,10 @@ func GenerateReq(info DBInfo) (out GenOutInfo, m _Model) {
 
 	var stt GenOutInfo
 	stt.FileCtx = m.generateReq()
-	stt.FileName = "gen_req" + ".go"
+	stt.FileName = "request" + ".go"
 
 	if name := config.GetOutFileName(); len(name) > 0 {
-		stt.FileName = "gen_req" + ".go"
+		stt.FileName = "request" + ".go"
 	}
 
 	return stt, m
@@ -89,10 +89,10 @@ func GenerateResp(info DBInfo) (out GenOutInfo, m _Model) {
 
 	var stt GenOutInfo
 	stt.FileCtx = m.generateResp()
-	stt.FileName = "gen_resp" + ".go"
+	stt.FileName = "response" + ".go"
 
 	if name := config.GetOutFileName(); len(name) > 0 {
-		stt.FileName = "gen_resp" + ".go"
+		stt.FileName = "response" + ".go"
 	}
 
 	return stt, m
@@ -120,10 +120,10 @@ func GenerateServices(info DBInfo) (out GenOutInfo, m _Model) {
 
 	var stt GenOutInfo
 	stt.FileCtx = m.generateServices()
-	stt.FileName = "gen_service" + ".go"
+	stt.FileName = "service" + ".go"
 
 	if name := config.GetOutFileName(); len(name) > 0 {
-		stt.FileName = "gen_service" + ".go"
+		stt.FileName = "service" + ".go"
 	}
 
 	return stt, m
@@ -136,10 +136,10 @@ func GenerateControllers(info DBInfo) (out GenOutInfo, m _Model) {
 
 	var stt GenOutInfo
 	stt.FileCtx = m.generateControllers()
-	stt.FileName = "gen_controller" + ".go"
+	stt.FileName = "controller" + ".go"
 
 	if name := config.GetOutFileName(); len(name) > 0 {
-		stt.FileName = "gen_controller" + ".go"
+		stt.FileName = "controller" + ".go"
 	}
 
 	return stt, m
